@@ -36,6 +36,9 @@ app.use(
 app.get("/", (req, res) => {
   res.send("Backend is running");
 });
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "OK", message: "Server is awake!" });
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/groups", groupRoutes);
