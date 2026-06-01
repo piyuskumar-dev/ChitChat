@@ -25,7 +25,7 @@ export function getReceiverSocketId(userId) {
 }
 
 // used to store online users
-const userSocketMap = {}; // {userId: socketId}
+const userSocketMap = {}; // {userId: [socketId]}
 
 // Video call rooms
 const videoRooms = {}; // {roomId: {users: [socketId], ...}}
@@ -34,7 +34,10 @@ io.on("connection", (socket) => {
   console.log("A user connected", socket.id);
 
   const userId = socket.handshake.query.userId;
-  if (userId) userSocketMap[userId] = socket.id;
+  if (userId) {
+    if (!userSocketMap[userId]) userSocketMap[userId] = [];
+    userSocketMap[userId].push(socket.id);
+  }
 
   // io.emit() is used to send events to all the connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
@@ -208,7 +211,12 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", () => {
     console.log("A user disconnected", socket.id);
-    delete userSocketMap[userId];
+    if (userId && userSocketMap[userId]) {
+      userSocketMap[userId] = userSocketMap[userId].filter(id => id !== socket.id);
+      if (userSocketMap[userId].length === 0) {
+        delete userSocketMap[userId];
+      }
+    }
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
     // Clean up video rooms

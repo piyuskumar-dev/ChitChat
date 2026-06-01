@@ -2,17 +2,16 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
   },
   "author": "",
   "type": "module",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "chatapp": "file:..",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
