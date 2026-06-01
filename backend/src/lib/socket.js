@@ -9,14 +9,30 @@ import { v4 as uuidv4 } from "uuid";
 const app = express();
 const server = http.createServer(app);
 
-const allowedSocketOrigins = ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176"];
+// Build allowed origins for Socket.IO using same logic as main CORS
+const allowedSocketOrigins = ["http://localhost:5173", "http://localhost:5174", "https://chit-chat-ten-phi.vercel.app", "https://chitchat-vmqk.onrender.com"];
 if (process.env.CLIENT_URL) {
   allowedSocketOrigins.push(process.env.CLIENT_URL);
 }
 
 const io = new Server(server, {
   cors: {
-    origin: allowedSocketOrigins,
+    origin: (origin, callback) => {
+      // No origin (same-site requests or tools like Postman)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin is allowed
+      const isAllowed = allowedSocketOrigins.includes(origin) ||
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:") ||
+        origin.endsWith(".vercel.app");
+      
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by Socket.IO CORS"));
+      }
+    },
   },
 });
 

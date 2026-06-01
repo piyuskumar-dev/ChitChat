@@ -18,10 +18,13 @@ dotenv.config();
 const PORT = process.env.PORT;
 const __dirname = path.resolve();
 
+// Trust proxy for production deployments (Render, Heroku, etc.)
+app.set('trust proxy', 1);
+
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
-const allowedOrigins = ["http://localhost:5173", "https://chit-chat-ten-phi.vercel.app"];
+const allowedOrigins = ["http://localhost:5173", "https://chit-chat-ten-phi.vercel.app", "https://chitchat-vmqk.onrender.com"]; // Add your frontend URLs here
 if (process.env.CLIENT_URL) {
   allowedOrigins.push(process.env.CLIENT_URL);
 }
